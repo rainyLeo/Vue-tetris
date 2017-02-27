@@ -1,5 +1,6 @@
 <template lang="html">
-  <div class="container">
+  <div class="container"
+    @keyup.74="handleBottom">
 		<div class="main">
 			<div class="decorate">
 				<div class="top-dot">
@@ -157,31 +158,36 @@
 
 		<div class="buttons">
 			<div class="button-normal button-top"
-        @click="handleTop">
+        @click="handleTop"
+        @keyup.75="handleTop">
 				<i></i>
 				<em></em>
 				<span>旋转</span>
 			</div>
 			<div class="button-normal button-bottom"
-        @click="handleBottom">
+        @click="handleBottom"
+        @keyup.74="handleBottom">
 				<i></i>
 				<em></em>
 				<span>下移</span>
 			</div>
 			<div class="button-normal button-left"
-        @click="handleLeft">
+        @click="handleLeft"
+        @keyup.72="handleLeft">
 				<i></i>
 				<em></em>
 				<span>左移</span>
 			</div>
 			<div class="button-normal button-right"
-        @click="handleRight">
+        @click="handleRight"
+        @keyup.76="handleRight">
 				<i></i>
 				<em></em>
 				<span>右移</span>
 			</div>
 			<div class="button-big"
-        @click="handleDrop">
+        @click="handleDrop"
+        @keyup.68="handleDrop">
 				<i></i>
 				<span>掉落(SPACE)</span>
 			</div>
@@ -206,6 +212,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
+import { isBottomAvailable } from '../util/check.js'
 
 export default {
   data() {
@@ -218,7 +225,6 @@ export default {
       'current',
       'grid'
     ]),
-
   },
 
   mounted() {
@@ -229,28 +235,9 @@ export default {
       'moveLeft',
       'moveRight',
       'moveBottom',
+      'drop',
       'rotate'
     ]),
-
-    inPlace(n, i) {
-      let x = this.current.x
-      let y = this.current.y
-      let shape = this.current.shape
-      let blockArr = []
-      for (let i = 0; i < shape.length; i++) {
-        for (let j = 0; j < shape[0].length; j++) {
-          if (shape[i][j] === 1) {
-            blockArr.push([x + i, y + j])
-          }
-        }
-      }
-      console.log('block', blockArr)
-      if (blockArr.includes([n, i])) {
-        return true
-      }
-      return false
-
-    },
 
     render() {
       let shape = this.current.shape
@@ -268,11 +255,6 @@ export default {
           }
         }
       }
-      ;[...box].forEach(e => {
-        if (e && e.classList.contains('highlight')) {
-          e.classList.remove('highlight')
-        }
-      })
 
       for (let i = 0; i < this.grid.length; i++) {
         for (let j = 0; j < this.grid[0].length; j++) {
@@ -281,6 +263,12 @@ export default {
           }
         }
       }
+
+      ;[...box].forEach(e => {
+        if (e && e.classList.contains('highlight')) {
+          e.classList.remove('highlight')
+        }
+      })
 
       renderArr.forEach(e => {
         if (e && e >= 0) {
@@ -310,7 +298,8 @@ export default {
     },
 
     handleDrop() {
-      console.log('drop')
+      this.drop()
+      this.render()
     },
 
     handlePause() {
@@ -326,6 +315,10 @@ export default {
 </script>
 
 <style lang="scss">
+// html, body, #app {
+//   height: 100%;
+// }
+
 * {
 	box-sizing: border-box;
 	padding: 0;
@@ -388,13 +381,14 @@ export default {
 .container {
 	width: 100%;
 	max-width: 640px;
-	height: 100%;
+	height: 80%;
 	margin: 0 auto;
 	padding-top: 42px;
 	// padding-top: 6.5%;
 	box-shadow: 0 0 10px #fff inset;
 	border-radius: 20px;
-	background-color: #eeca1a;
+	background-color: #eeca1a; // main color
+  // background-color: #fff;
 
 	.main {
 		width: 480px;

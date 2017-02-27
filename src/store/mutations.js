@@ -1,5 +1,12 @@
 import Block from '../util/block.js'
 import { emptyGrid } from '../util/const'
+import {
+  putBottom,
+  isBottomAvailable,
+  isLeftAvailable,
+  isRightAvailable,
+  hasSolidLine
+} from '../util/check'
 
 export const state = {
   current: {
@@ -30,54 +37,52 @@ function initBlock() {
     timeStamp: state.current.timeStamp,
   } = block)
   state.nextType = block.nextType
+  state.lock = false
 }
 
 initBlock()
 
-function putBottom() {
-  let shape = state.current.shape
-  let x = state.current.x
-  let y = state.current.y
-    for (let i = 0; i < shape.length; i++) {
-      for (let j = 0; j < shape[0].length; j++) {
-        if (shape[i][j] === 1) {
-          state.grid[x + i][y + j] = 1
-        }
-      }
-    }
-}
-
-function stop() {
-  if (state.current.x + state.current.shape.length === 20) {
-    return true
-  }
-  return false
-}
-
 export const mutations = {
   moveLeft(state) {
-    if (state.current.y > 0) {
+    if (isLeftAvailable(state)) {
       state.current.y -= 1
     }
   },
+
   moveRight(state) {
-    if (state.current.y + state.current.shape[0].length < 10) {
+    if (isRightAvailable(state)) {
       state.current.y += 1
     }
   },
+
   moveBottom(state) {
-    if (state.current.x + state.current.shape.length < 20) {
+    if (isBottomAvailable(state)) {
       state.current.x += 1
-      console.log('grid: x', state.grid, state.current.x)
-      if (stop()) {
-        putBottom()
-        initBlock()
+      if (!isBottomAvailable(state)) {
+        putBottom(state)
+        state.lock = true
+        // setTimeout(function() {
+        // console.log('grid before', state.grid)
+          hasSolidLine(state)
+          // console.log('grid after', state.grid)
+        // }, 0)
+        setTimeout(function() {
+
+          initBlock()
+        }, 10)
       }
     }
   },
+
+  drop(state) {
+    while (!state.lock) {
+      mutations.moveBottom(state)
+    }
+  },
+
   rotate(state) {
     let result = []
-    let shape = state.current.shape
+    let { shape, x, y, type } = state.current
 
     for (let i = 0; i < shape[0].length; i++) {
       let item = []
@@ -86,13 +91,19 @@ export const mutations = {
       }
       result.push(item)
     }
+
+    if ((type !== 'D' && y + result[0].length > 10) ||
+        (type === 'D' && y + result[0].length > 11)) {
+      return
+    }
+
     state.current.shape = result.reverse()
 
-    if (state.current.type === 'D') {
+    if (type === 'D') {
       if (state.current.shape[0].length === 4) {
-        ;[state.current.x, state.current.y] = [state.current.x - 1, state.current.y + 1]
+        ;[state.current.x, state.current.y] = [x + 1, y - 1]
       } else {
-        ;[state.current.x, state.current.y] = [state.current.x + 1, state.current.y - 1]
+        ;[state.current.x, state.current.y] = [x - 1, y + 1]
       }
     }
   }
