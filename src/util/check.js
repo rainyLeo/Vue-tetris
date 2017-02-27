@@ -1,7 +1,7 @@
 import { emptyLine } from './const'
 
 export function isBottomAvailable(state) {
-  const { shape, x, y } = state.current
+  let { shape, x, y } = state.current
 
   if (x + shape.length > 19) {
     return false
@@ -20,20 +20,19 @@ export function isBottomAvailable(state) {
 }
 
 export function putBottom(state) {
-  // const { shape, x, y } = state.current
+  let { shape, x, y } = state.current
 
-  for (let i = 0; i < state.current.shape.length; i++) {
-    for (let j = 0; j < state.current.shape[0].length; j++) {
+  for (let i = 0; i < shape.length; i++) {
+    for (let j = 0; j < shape[0].length; j++) {
       if (state.current.shape[i][j] === 1) {
-        state.grid[state.current.x + i][state.current.y + j] = 1
+        state.grid[x + i][y + j] = 1
       }
     }
   }
-  // hasSolidLine(state)
 }
 
 export function isLeftAvailable(state) {
-  const { shape, x, y } = state.current
+  let { shape, x, y } = state.current
 
   if (y < 1) {
     return false
@@ -52,7 +51,7 @@ export function isLeftAvailable(state) {
 }
 
 export function isRightAvailable(state) {
-  const { shape, x, y } = state.current
+  let { shape, x, y } = state.current
 
   if (y + shape[0].length > 9) {
     return false
@@ -71,14 +70,10 @@ export function isRightAvailable(state) {
 }
 
 export function hasSolidLine(state) {
-  // let grid = state.grid
   for (let i = 0; i < state.grid.length; i++) {
     if (state.grid[i].every(e => e === 1)) {
-      console.log('has solid', state.grid)
       state.grid.splice(i, 1)
       state.grid.unshift(emptyLine)
-      console.log('after grid', state.grid)
     }
   }
-
 }

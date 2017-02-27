@@ -240,26 +240,28 @@ export default {
     ]),
 
     render() {
-      let shape = this.current.shape
-      let x = this.current.x
-      let y = this.current.y
-      let renderArr = []
+      let { shape, x, y } = this.current
+
+      let renderBlockArr = []
+      let renderGridArr = []
       let box = document.querySelectorAll('#js-grid b')
 
+      // 方块下一个位置
       let startPoint = x * 10 + y
       for (let i = 0; i < shape.length; i++) {
         for (let j = 0; j < shape[0].length; j++) {
           if (shape[i][j] === 1) {
             let temp = startPoint + j + (i * 10)
-            renderArr.push(temp)
+            renderBlockArr.push(temp)
           }
         }
       }
 
+      // 网格中已存在的小格子
       for (let i = 0; i < this.grid.length; i++) {
         for (let j = 0; j < this.grid[0].length; j++) {
           if (this.grid[i][j] === 1) {
-            renderArr.push(i * 10 + j)
+            renderGridArr.push(i * 10 + j)
           }
         }
       }
@@ -270,7 +272,15 @@ export default {
         }
       })
 
-      renderArr.forEach(e => {
+      if (!this.$store.state.lock) {
+        renderBlockArr.forEach(e => {
+          if (e && e >= 0) {
+            box[e].classList.add('highlight')
+          }
+        })
+      }
+
+      renderGridArr.forEach(e => {
         if (e && e >= 0) {
           box[e].classList.add('highlight')
         }

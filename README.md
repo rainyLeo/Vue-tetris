@@ -1,6 +1,6 @@
 # vue-tetris
 
-> vue-tetris
+> vue 实现的俄罗斯方块游戏, 使用了 vue 2.0 + vuex
 
 ## Build Setup
 
@@ -14,5 +14,3 @@ npm run dev
 # build for production with minification
 npm run build
 ```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

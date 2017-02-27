@@ -15,7 +15,6 @@ export const state = {
     shape: null,
     x: null,
     y: null,
-
   },
   nextType: null,
   grid: JSON.parse(JSON.stringify(emptyGrid)),
@@ -28,7 +27,6 @@ export const state = {
 
 function initBlock() {
   let block = new Block({ type: state.nextType })
-  console.log('block', block)
   ;({
     type: state.current.type,
     shape: state.current.shape,
@@ -60,14 +58,10 @@ export const mutations = {
       state.current.x += 1
       if (!isBottomAvailable(state)) {
         putBottom(state)
+        hasSolidLine(state)
         state.lock = true
-        // setTimeout(function() {
-        // console.log('grid before', state.grid)
-          hasSolidLine(state)
-          // console.log('grid after', state.grid)
-        // }, 0)
-        setTimeout(function() {
 
+        setTimeout(function() {
           initBlock()
         }, 10)
       }
